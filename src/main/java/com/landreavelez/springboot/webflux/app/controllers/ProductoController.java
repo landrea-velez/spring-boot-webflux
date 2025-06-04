@@ -1,17 +1,22 @@
 package com.landreavelez.springboot.webflux.app.controllers;
 
 import java.time.Duration;
+import java.util.Date;
 
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.spring6.context.webflux.ReactiveDataDriverContextVariable;
 
 import reactor.core.publisher.Flux;
@@ -89,7 +94,30 @@ public class ProductoController {
 		return Mono.just("form");
 	}
 	
-	
+	@PostMapping("/form")
+	public Mono<String> guardar(@Valid Producto producto, BindingResult result, Model model, SessionStatus status){
+		
+		if(result.hasErrors()) {
+			model.addAttribute("titulo", "Errores en formulario producto");
+			model.addAttribute("boton", "Guardar");
+			return Mono.just("form");
+		} else {
+		status.setComplete();
+
+		Mono<Categoria> categoria = service.findCategoriaById(producto.getCategoria().getId());
+		
+		return categoria.flatMap(c -> {
+			if(producto.getCreateAt()==null) {
+				producto.setCreateAt(new Date());
+			}
+			producto.setCategoria(c);
+			return service.save(producto);
+		}).doOnNext(p-> {
+			log.info("Categoria asignada: " + p.getCategoria().getNombre() + " Id Cat: " + p.getCategoria().getId());
+			log.info("Producto guardado: " + p.getNombre() + " Id: " + p.getId());
+		}).thenReturn("redirect:/listar?success=producto+guardado+con+exito");
+		}
+	}
 	
 	@GetMapping("/eliminar/{id}")
 	public Mono<String> eliminar(@PathVariable String id){

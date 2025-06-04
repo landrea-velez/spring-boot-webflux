@@ -17,22 +17,25 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoRestController {
-	
+
 	@Autowired
 	private ProductoDao dao;
 	
 	private static final Logger log = LoggerFactory.getLogger(ProductoController.class);
 	
-	@GetMapping()
-	public Flux<Producto> index(){		
-		Flux<Producto> productos = dao.findAll().map(producto -> {
-			producto.setNombre(producto.getNombre().toUpperCase());
-			return producto;
-		}).doOnNext(prod -> log.info(prod.getNombre()));
-		
-		return productos;
+	@GetMapping
+	public Flux<Producto> index(){
+
+        Flux<Producto> productos = dao.findAll()
+        		.map(producto -> {
+        			producto.setNombre(producto.getNombre().toUpperCase());
+        			return producto;
+        			})
+        		.doOnNext(prod -> log.info(prod.getNombre()));
+        
+        return productos;
 	}
-	
+
 	@GetMapping("/{id}")
 	public Mono<Producto> show(@PathVariable String id){
 		
@@ -47,5 +50,5 @@ public class ProductoRestController {
 				
 		return producto;
 	}
-
+	
 }
