@@ -3,8 +3,6 @@ package com.landreavelez.springboot.webflux.app.controllers;
 import java.time.Duration;
 import java.util.Date;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +93,7 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/form")
-	public Mono<String> guardar(@Valid Producto producto, BindingResult result, Model model, SessionStatus status){
+	public Mono<String> guardar(Producto producto, BindingResult result, Model model, SessionStatus status){
 		
 		if(result.hasErrors()) {
 			model.addAttribute("titulo", "Errores en formulario producto");
