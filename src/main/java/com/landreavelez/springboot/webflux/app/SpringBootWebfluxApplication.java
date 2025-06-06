@@ -46,7 +46,7 @@ public class SpringBootWebfluxApplication implements CommandLineRunner{
 		Categoria muebles = new Categoria("Muebles");
 		
 		Flux.just(electronico, deporte, computacion, muebles)
-		.flatMap(service::saveCategoria)
+		.flatMap(service::saveCategoria) // c -> service.saveCategoria(c)
 		.doOnNext(c ->{
 			log.info("Categoria creada: " + c.getNombre() + ", Id: " + c.getId());
 		}).thenMany(
