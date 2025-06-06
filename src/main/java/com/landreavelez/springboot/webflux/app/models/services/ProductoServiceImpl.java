@@ -15,34 +15,34 @@ import reactor.core.publisher.Mono;
 public class ProductoServiceImpl implements ProductoService{
 	
 	@Autowired
-	private ProductoDao dao;
+	private ProductoDao productoDao;
 	
 	@Autowired
 	private CategoriaDao categoriaDao;
 	
 	@Override
 	public Flux<Producto> findAll() {
-		return dao.findAll();
+		return productoDao.findAll();
 	}
 
 	@Override
 	public Mono<Producto> findById(String id) {
-		return dao.findById(id);
+		return productoDao.findById(id);
 	}
 
 	@Override
 	public Mono<Producto> save(Producto producto) {
-		return dao.save(producto);
+		return productoDao.save(producto);
 	}
 
 	@Override
 	public Mono<Void> delete(Producto producto) {
-		return dao.delete(producto);
+		return productoDao.delete(producto);
 	}
 
 	@Override
 	public Flux<Producto> findAllConNombreUpperCase() {
-		return dao.findAll().map(producto -> {
+		return productoDao.findAll().map(producto -> {
 			producto.setNombre(producto.getNombre().toUpperCase());
 			return producto;
 		});
